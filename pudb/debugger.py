@@ -74,6 +74,7 @@ Keys:
     h/l - scroll left/right
     g/G - start/end
     L - show (file/line) location / go to line
+    F - open file
     / - search
     ,/. - search next/previous
 
