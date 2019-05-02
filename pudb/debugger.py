@@ -1185,6 +1185,22 @@ class DebuggerUI(FrameVarInfoKeeper):
         def move_end(w, size, key):
             self.source.set_focus(len(self.source)-1)
 
+        def go_to_file(w, size, key):
+            current_file = self.source_code_provider.get_breakpoint_source_identifier()
+            file_edit = urwid.Edit([("label", "Open File: ")], current_file)
+            dialog = self.dialog(
+                urwid.ListBox(urwid.SimpleListWalker([
+                    urwid.AttrMap(file_edit, "value")])),
+                [("OK", True), ("Cancel", False)],
+                title="Go to File"
+            )
+            if dialog:
+                filename = file_edit.get_edit_text()
+                self.set_source_code_provider(
+                    FileSourceCodeProvider(self.debugger, filename))
+                self.source_list.set_focus(0)
+
+
         def go_to_line(w, size, key):
             _, line = self.source.get_focus()
 
@@ -1437,6 +1453,7 @@ class DebuggerUI(FrameVarInfoKeeper):
         self.source_sigwrap.listen("s", step)
         self.source_sigwrap.listen("f", finish)
         self.source_sigwrap.listen("r", finish)
+        self.source_sigwrap.listen("F", go_to_file)
         self.source_sigwrap.listen("c", cont)
         self.source_sigwrap.listen("t", run_to_cursor)
 
